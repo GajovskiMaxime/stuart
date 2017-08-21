@@ -3,6 +3,9 @@
 # C extensions
 *.so
 
+# Jetbrains
+.idea
+
 # Packages
 *.egg
 *.egg-info

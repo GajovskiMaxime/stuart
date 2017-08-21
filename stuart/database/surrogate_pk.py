@@ -1,5 +1,5 @@
 from stuart.compat import basestring
-from stuart.database import db
+from stuart.extensions import db
 
 
 # From Mike Bayer's "Building the app" talk
@@ -20,4 +20,3 @@ class SurrogatePK(object):
         ):
             return cls.query.get(int(record_id))
         return None
-

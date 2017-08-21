@@ -54,3 +54,6 @@ env/
 
 # databases
 *.db
+
+# cache
+.cache

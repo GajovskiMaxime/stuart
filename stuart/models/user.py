@@ -1,6 +1,7 @@
 import datetime as dt
 
 from flask_login import UserMixin
+from whoosh.analysis import SimpleAnalyzer
 
 from stuart.database.surrogate_pk import SurrogatePK
 from stuart.extensions import bcrypt, db
@@ -11,8 +12,12 @@ class User(UserMixin, SurrogatePK, AbstractModel):
     """A user of the app."""
 
     __tablename__ = 'users'
+    __searchable__ = ['username', 'email']
+    __analyzer__ = SimpleAnalyzer()
+
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
+
     #: The hashed password
     password = db.Column(db.Binary(128), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=dt.datetime.utcnow)

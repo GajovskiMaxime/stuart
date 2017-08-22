@@ -29,6 +29,8 @@ class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(DB_PATH)
     DEBUG_TB_ENABLED = False  # Disable Debug toolbar
 
+    MINION_PATTERN = '*tools*'
+
 
 class DevConfig(Config):
     """Development configuration."""
@@ -36,11 +38,12 @@ class DevConfig(Config):
     ENV = 'dev'
     DEBUG = True
     DB_NAME = ENV + '.db'
-
     DB_PATH = os.path.join(Config.DB_DIR, DB_NAME)
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{0}'.format(DB_PATH)
     DEBUG_TB_ENABLED = True
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
+
+    MINION_PATTERN = 'dave'
 
 
 class TestConfig(Config):

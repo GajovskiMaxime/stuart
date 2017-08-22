@@ -5,10 +5,9 @@ from glob import glob
 from subprocess import call
 
 import click
-from flask import current_app
+from flask import current_app, app
 from flask.cli import with_appcontext
 from werkzeug.exceptions import MethodNotAllowed, NotFound
-
 from stuart.extensions import salt_client
 
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -27,8 +26,9 @@ def test():
 @click.command()
 def populate_database():
     """Populate database."""
-    test = salt_client.cmd('G@role:*tools*', 'sys.list_functions', ['cp'])
-    current_app.logger.info(test)
+    click.echo('Ping minion')
+    test = salt_client.cmd(app.config['MINION_PATTERN'], 'test.ping')
+    click.echo(test)
 
 @click.command()
 @click.option('-f', '--fix-imports', default=False, is_flag=True,

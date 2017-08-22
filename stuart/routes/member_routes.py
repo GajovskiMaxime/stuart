@@ -3,6 +3,8 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
 
+from stuart.models.user import User
+
 member_blueprint = Blueprint(
     'user',
     __name__,
@@ -14,4 +16,5 @@ member_blueprint = Blueprint(
 @login_required
 def members():
     """List members."""
-    return render_template('users/members.html')
+    users = User.get_all()
+    return render_template('users/members.html', users=users)

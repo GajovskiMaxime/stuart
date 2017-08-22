@@ -57,6 +57,7 @@ env/
 
 # databases
 *.db
+migrations
 
 # cache
 .cache

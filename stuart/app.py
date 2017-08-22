@@ -6,16 +6,22 @@ from stuart import commands
 from stuart.routes.member_routes import member_blueprint
 from stuart.routes.public_routes import public_blueprint
 from stuart.extensions import bcrypt, cache, csrf_protect, db, debug_toolbar, login_manager, migrate, webpack
-from stuart.settings import ProdConfig
+from stuart.settings import DevConfig
 
 
-def create_app(config_object=ProdConfig):
+# TODO : Look at proper way for alembic auto-detect.
+def create_app(config_object=DevConfig):
     """An application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
 
     :param config_object: The configuration object to use.
     """
+
     app = Flask(__name__.split('.')[0])
     app.config.from_object(config_object)
+
+    from stuart.models.salt_module import SaltModule
+    from stuart.models.salt_module_action import SaltModuleAction
+
     register_extensions(app)
     register_blueprints(app)
     register_errorhandlers(app)
@@ -57,12 +63,13 @@ def register_errorhandlers(app):
 
 
 def register_shellcontext(app):
+    from stuart.models.user import User
     """Register shell context objects."""
     def shell_context():
         """Shell context objects."""
         return {
             'db': db,
-            'User': user.models.User}
+            'User': User}
 
     app.shell_context_processor(shell_context)
 

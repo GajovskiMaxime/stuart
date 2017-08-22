@@ -5,10 +5,11 @@ from glob import glob
 from subprocess import call
 
 import click
-from flask import current_app, app
+from flask import current_app
 from flask.cli import with_appcontext
 from werkzeug.exceptions import MethodNotAllowed, NotFound
 from stuart.extensions import salt_client
+from stuart.models.salt_module import SaltModule
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(HERE, os.pardir)
@@ -24,12 +25,22 @@ def test():
 
 
 @click.command()
-def populate_database():
+@click.option('-t', '--target', default=None,
+              help='Salt minion target.')
+@with_appcontext
+def populate_database_from_minion(target):
     """Populate database."""
-    click.echo('Ping minion')
-    test = salt_client.cmd(app.config['MINION_PATTERN'], 'test.ping')
-    click.echo(test)
-
+    click.echo("__Ping minion with pattern '{}'__ :".format(target))
+    minion_is_returning = salt_client.cmd(target, 'test.ping')
+    if not minion_is_returning:
+        click.echo(err=True, message='Minion is not returning')
+	exit(1)
+    
+    minion_modules = salt_client.cmd(target, 'sys.list_modules')
+    modules = minion_modules[target]
+    for module in modules:
+	created_module = SaltModule.create(name=module)
+    
 @click.command()
 @click.option('-f', '--fix-imports', default=False, is_flag=True,
               help='Fix imports using isort, before linting')
